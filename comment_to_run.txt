@@ -1,0 +1,2 @@
+запускать с флагом
+myApp --config=./config/file.yaml
