@@ -12,20 +12,10 @@ import (
 )
 
 func main() {
-	// settings, err := godotenv.Read("../.env")
-	// os.Setenv("DATABASE_URL", settings["DATABASE_URL"])
-	// os.Setenv("PORT", settings["PORT"])
-	// if err != nil {
-	// 	panic("cant read .env file!")
-	// }
-
 	ctx := context.Background()
 
 	// 1) init db
-	db, err := NewDB(ctx)
-	if err != nil {
-		panic("cant init db: " + err.Error())
-	}
+	db := NewDB(ctx)
 
 	// 2 init  grpc server and auth handler
 	authHandler := NewAuthHandler(db)

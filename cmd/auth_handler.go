@@ -58,6 +58,16 @@ func (h *AuthHandler) Login(ctx context.Context, req *auth.LoginRequest) (*auth.
 	return &auth.LoginResponse{Username: username, AccessToken: token}, nil
 }
 
+func (h *AuthHandler) Validate(ctx context.Context, req *auth.ValidateRequest) (*auth.ValidateResponse, error) {
+	_, pwd, _, err := h.DB.GetUserById(ctx, req.GetUserId())
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "user with such ID does not exist")
+	}
+	isValid := bcrypt.CompareHashAndPassword([]byte(pwd), []byte(req.GetPassword()))
+	return &auth.ValidateResponse{IsValid: isValid == nil}, nil
+
+}
+
 func generateToken(username, password, email string) string {
 	secret := os.Getenv("ACCESS_TOKEN_SECRET")
 	claims := jwt.MapClaims{

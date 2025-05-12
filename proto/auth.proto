@@ -7,6 +7,7 @@ option go_package = "/auth";
 service Auth {
     rpc Register (RegisterRequest) returns (RegisterResponse);
     rpc Login (LoginRequest) returns (LoginResponse);
+    rpc ValidatePassword (ValidateRequest) returns (ValidateResponse);
 }
 
 message RegisterRequest {
@@ -29,3 +30,13 @@ message LoginResponse {
     string username = 1;
     string accessToken = 2;
 }
+
+message ValidateRequest {
+    uint64 userId = 1;
+    string password = 2;
+}
+
+message ValidateResponse {
+    bool isValid = 1;
+}
+

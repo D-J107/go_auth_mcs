@@ -18,7 +18,7 @@ type DB struct {
 	pool *pgxpool.Pool
 }
 
-func NewDB(ctx context.Context) (*DB, error) {
+func NewDB(ctx context.Context) *DB {
 	url := os.Getenv("DATABASE_URL")
 	if url == "" {
 		panic("environment variable DATABASE URL not set")
@@ -27,7 +27,7 @@ func NewDB(ctx context.Context) (*DB, error) {
 	if err != nil {
 		panic("cant establish connection to remote Postgre db")
 	}
-	return &DB{pool: pool}, nil
+	return &DB{pool: pool}
 }
 
 func (db *DB) GetRoleID(ctx context.Context, value string) (int, error) {
@@ -68,4 +68,12 @@ func (db *DB) GetUserByEmail(ctx context.Context, email string) (username, hashe
 		return "", "", err
 	}
 	return username, hashedPwd, nil
+}
+
+func (db *DB) GetUserById(ctx context.Context, id uint64) (username, hashedPwd, email string, err error) {
+	err = db.pool.QueryRow(ctx, `SELECT username,password,email FROM users WHERE id = $1`, id).Scan(&username, &hashedPwd, &email)
+	if err != nil {
+		return "", "", "", err
+	}
+	return username, hashedPwd, email, nil
 }
